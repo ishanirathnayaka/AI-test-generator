@@ -12,10 +12,18 @@
     "test:coverage": "jest --coverage",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
+    "db:status": "node src/utils/db-cli.js status",
+    "db:seed": "node src/utils/db-cli.js seed",
+    "db:clear": "node src/utils/db-cli.js clear",
+    "db:backup": "node src/utils/db-cli.js backup",
+    "db:restore": "node src/utils/db-cli.js restore",
+    "migrate": "node src/utils/db-cli.js migrate",
+    "test:db": "node src/utils/test-db.js",
     "migrate": "node src/utils/migrate.js",
     "seed": "node src/utils/seed.js"
   },
   "dependencies": {
+    "commander": "^11.0.0",
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "helmet": "^7.0.0",
