@@ -11,6 +11,9 @@ import coverageReducer from './slices/coverageSlice';
 import uiReducer from './slices/uiSlice';
 import userReducer from './slices/userSlice';
 
+// Import middleware
+import { listenerMiddleware } from './middleware/listenerMiddleware';
+
 // Persist configuration
 const persistConfig = {
   key: 'root',
@@ -76,12 +79,18 @@ export const store = configureStore({
       serializabilityCheck: {
         warnAfter: 128,
       },
-    }),
+    })
+    // Add listener middleware for enhanced functionality
+    .prepend(listenerMiddleware.middleware),
   // Enable Redux DevTools in development
   devTools: process.env.NODE_ENV !== 'production' && {
     name: 'AI Test Generator',
     trace: true,
     traceLimit: 25,
+    actionCreators: {
+      // Add custom action creators for debugging
+      resetStore: () => ({ type: 'RESET_STORE' }),
+    },
   },
 });
 
