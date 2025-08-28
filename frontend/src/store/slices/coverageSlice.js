@@ -1,15 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { api } from '../../services/api';
+import { coverageAnalysisService } from '../../services';
 
 // Async thunks for coverage operations
 export const analyzeCoverage = createAsyncThunk(
   'coverage/analyze',
   async (analysisData, { rejectWithValue }) => {
     try {
-      const response = await api.post('/code/analyze-coverage', analysisData);
-      return response.data;
+      const result = await coverageAnalysisService.analyzeCoverage(analysisData);
+      return result;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Coverage analysis failed');
+      return rejectWithValue(error.message || 'Coverage analysis failed');
     }
   }
 );
@@ -18,10 +18,10 @@ export const getCoverageReport = createAsyncThunk(
   'coverage/getReport',
   async (reportId, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/code/coverage/${reportId}`);
-      return response.data;
+      const result = await coverageAnalysisService.getCoverageReport(reportId);
+      return result;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch coverage report');
+      return rejectWithValue(error.message || 'Failed to fetch coverage report');
     }
   }
 );
@@ -30,10 +30,10 @@ export const getUserCoverageReports = createAsyncThunk(
   'coverage/getUserReports',
   async (params, { rejectWithValue }) => {
     try {
-      const response = await api.get('/code/coverage', { params });
-      return response.data;
+      const result = await coverageAnalysisService.getUserCoverageReports(params);
+      return result;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch coverage reports');
+      return rejectWithValue(error.message || 'Failed to fetch coverage reports');
     }
   }
 );
@@ -42,10 +42,10 @@ export const deleteCoverageReport = createAsyncThunk(
   'coverage/deleteReport',
   async (reportId, { rejectWithValue }) => {
     try {
-      await api.delete(`/code/coverage/${reportId}`);
+      await coverageAnalysisService.deleteCoverageReport(reportId);
       return reportId;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to delete coverage report');
+      return rejectWithValue(error.message || 'Failed to delete coverage report');
     }
   }
 );

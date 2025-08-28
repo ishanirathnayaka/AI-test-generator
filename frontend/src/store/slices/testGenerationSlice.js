@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { api } from '../../services/api';
+import { testGenerationService } from '../../services';
 
 // Async thunks for test generation operations
 export const generateTests = createAsyncThunk(
@@ -10,14 +10,14 @@ export const generateTests = createAsyncThunk(
       dispatch(setGenerating(true));
       dispatch(setProgress({ progress: 10, step: 'Analyzing code structure...' }));
       
-      const response = await api.post('/code/generate-tests', generationData);
+      const result = await testGenerationService.generateTests(generationData);
       
       // Simulate progress updates
       dispatch(setProgress({ progress: 50, step: 'Generating test cases...' }));
       
-      return response.data;
+      return result;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Test generation failed');
+      return rejectWithValue(error.message || 'Test generation failed');
     }
   }
 );
@@ -26,10 +26,10 @@ export const getTestGeneration = createAsyncThunk(
   'testGeneration/getGeneration',
   async (generationId, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/code/tests/${generationId}`);
-      return response.data;
+      const result = await testGenerationService.getTestGeneration(generationId);
+      return result;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch test generation');
+      return rejectWithValue(error.message || 'Failed to fetch test generation');
     }
   }
 );
@@ -38,10 +38,10 @@ export const getUserTestGenerations = createAsyncThunk(
   'testGeneration/getUserGenerations',
   async (params, { rejectWithValue }) => {
     try {
-      const response = await api.get('/code/tests', { params });
-      return response.data;
+      const result = await testGenerationService.getUserTestGenerations(params);
+      return result;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch test generations');
+      return rejectWithValue(error.message || 'Failed to fetch test generations');
     }
   }
 );
@@ -50,10 +50,10 @@ export const deleteTestGeneration = createAsyncThunk(
   'testGeneration/deleteGeneration',
   async (generationId, { rejectWithValue }) => {
     try {
-      await api.delete(`/code/tests/${generationId}`);
+      await testGenerationService.deleteTestGeneration(generationId);
       return generationId;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to delete test generation');
+      return rejectWithValue(error.message || 'Failed to delete test generation');
     }
   }
 );
@@ -62,13 +62,10 @@ export const exportTests = createAsyncThunk(
   'testGeneration/export',
   async ({ generationId, format }, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/code/tests/${generationId}/export`, {
-        params: { format },
-        responseType: 'blob'
-      });
-      return response.data;
+      const result = await testGenerationService.exportTests(generationId, { format });
+      return result;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to export tests');
+      return rejectWithValue(error.message || 'Failed to export tests');
     }
   }
 );
