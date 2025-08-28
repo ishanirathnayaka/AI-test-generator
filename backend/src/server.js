@@ -15,11 +15,7 @@ const errorHandler = require('./middleware/errorHandler');
 const validationMiddleware = require('./middleware/validation');
 
 // Import routes
-const authRoutes = require('./routes/auth');
-const codeRoutes = require('./routes/code');
-const testRoutes = require('./routes/test');
-const coverageRoutes = require('./routes/coverage');
-const userRoutes = require('./routes/user');
+const apiRoutes = require('./routes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -132,20 +128,8 @@ app.get('/api', (req, res) => {
   });
 });
 
-// API Routes
-const apiRouter = express.Router();
-
-// Public routes
-apiRouter.use('/auth', authRoutes);
-
-// Protected routes (require authentication)
-apiRouter.use('/code', authMiddleware, codeRoutes);
-apiRouter.use('/tests', authMiddleware, aiLimiter, testRoutes);
-apiRouter.use('/coverage', authMiddleware, coverageRoutes);
-apiRouter.use('/users', authMiddleware, userRoutes);
-
 // Mount API routes
-app.use('/api', apiRouter);
+app.use('/api', apiRoutes);
 
 // Static file serving for uploads
 app.use('/uploads', express.static('uploads'));
